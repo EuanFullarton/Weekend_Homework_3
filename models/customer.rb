@@ -1,4 +1,5 @@
 require_relative('../db/sql_runner')
+require_relative('film')
 
 class Customer
 
@@ -30,6 +31,12 @@ class Customer
   def films()
     sql = "SELECT films.* FROM films INNER JOIN tickets ON tickets.film_id = films.id WHERE tickets.customer_id = #{@id};"
     return Film.map_items(sql)
+  end
+
+  def number_of_tickets()
+    sql = "SELECT tickets.* FROM tickets WHERE tickets.customer_id = #{@id};"
+    tickets = Ticket.map_items(sql)
+    return tickets.length()
   end
 
   def self.all()
