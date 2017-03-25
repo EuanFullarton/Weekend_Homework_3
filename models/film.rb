@@ -17,6 +17,21 @@ class Film
     @id = film['id'].to_i
   end
 
+  def update()
+    sql = "UPDATE films SET (title, price) = ('#{@title}', #{@price}) WHERE id = #{@id}"
+    SqlRunner.run(sql)
+  end
+
+  def delete()
+    sql = "DELETE FROM films WHERE id = #{@id}"
+    SqlRunner.run(sql)
+  end
+
+  def customers()
+    sql = "SELECT customers.* FROM customers INNER JOIN tickets ON tickets.customer_id = customers.id WHERE tickets.film_id = #{@id};"
+    return Customer.map_items(sql)
+  end
+
   def self.all()
     sql = "SELECT * FROM films"
     return Film.map_items(sql)

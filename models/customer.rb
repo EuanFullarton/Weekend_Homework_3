@@ -17,6 +17,21 @@ class Customer
     @id = customer['id'].to_i
   end
 
+  def update()
+    sql = "UPDATE customers SET (name, funds) = ('#{@name}', #{@funds}) WHERE id = #{@id}"
+    SqlRunner.run(sql)
+  end
+
+  def delete()
+    sql = "DELETE FROM customers WHERE id = #{@id}"
+    SqlRunner.run(sql)
+  end
+
+  def films()
+    sql = "SELECT films.* FROM films INNER JOIN tickets ON tickets.film_id = films.id WHERE tickets.customer_id = #{@id};"
+    return Film.map_items(sql)
+  end
+
   def self.all()
     sql = "SELECT * FROM customers"
     return Customer.map_items(sql)
