@@ -17,4 +17,15 @@ class Film
     @id = film['id'].to_i
   end
 
+  def self.all()
+    sql = "SELECT * FROM films"
+    return Film.map_items(sql)
+  end
+
+  def self.map_items(sql)
+    films = SqlRunner.run(sql)
+    result = films.map {|film| Film.new(film)}
+    return result
+  end
+
 end
