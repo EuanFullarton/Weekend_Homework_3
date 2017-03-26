@@ -29,14 +29,29 @@ class Customer
   end
 
   def films()
-    sql = "SELECT films.* FROM films INNER JOIN tickets ON tickets.film_id = films.id WHERE tickets.customer_id = #{@id};"
+    sql = "SELECT films.* FROM films INNER JOIN tickets ON tickets.film_id = films.id WHERE tickets.customer_id = #{@id}"
     return Film.map_items(sql)
   end
 
   def number_of_tickets()
-    sql = "SELECT tickets.* FROM tickets WHERE tickets.customer_id = #{@id};"
+    sql = "SELECT tickets.* FROM tickets WHERE tickets.customer_id = #{@id}"
     tickets = Ticket.map_items(sql)
     return tickets.length()
+  end
+
+  def buy_tickets()
+    customer_funds = @funds
+    sql = "SELECT films.price FROM films INNER JOIN tickets ON tickets.film_id = films.id WHERE tickets.customer_id = #{@id}"
+    film_price = SqlRunner.run(sql).first['price'].to_i
+    if customer_funds >= film_price
+      @new_total = (customer_funds - (film_price * number_of_tickets)).to_i
+      sql = "UPDATE customers SET (funds) = (#{@new_total}) WHERE id = #{@id}"
+      SqlRunner.run(sql)
+      @funds = @new_total
+      return "New total for #{@name} is #{@new_total}"
+    else
+      return "#{@name} can't afford this ticket."
+    end
   end
 
   def self.all()
